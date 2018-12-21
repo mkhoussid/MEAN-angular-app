@@ -27,7 +27,7 @@ app.post('/api/post', (req, res, next) => {
   });
 });
 
-app.use('/api/posts', (req, res, next) => {
+app.get('/api/posts', (req, res, next) => {
   const posts = [
     {
       id: 'fa336h',
