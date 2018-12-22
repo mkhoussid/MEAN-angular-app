@@ -54,7 +54,6 @@ app.put('/api/posts/:id', (req, res, next) => {
     content: req.body.content
   });
   Post.updateOne({ _id: req.params.id }, post).then(result => {
-    console.log(result);
     res.status(200).json({ message: `Successfully updated ${req.params.id}` });
   });
 });
