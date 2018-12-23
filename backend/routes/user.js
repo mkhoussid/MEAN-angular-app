@@ -1,5 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
@@ -7,7 +8,6 @@ const router = express.Router();
 
 router.post('/signup', (req, res, next) => {
   bcrypt.hash(req.body.password, 10).then(hash => {
-    console.log('\n\n\n\n\n\n\n\n\nentered\n\n\n\n\n\n\n\n\n\n');
     const user = new User({
       email: req.body.email,
       password: hash
@@ -27,6 +27,36 @@ router.post('/signup', (req, res, next) => {
         });
       });
   });
+});
+
+router.post('/login', (req, res, next) => {
+  User.find({ email: req.body.email })
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({
+          message: `Email ${req.body.email} does not exist in system`
+        });
+      }
+      return bcrypt.compare(req.body.password, user.password); //compare return a promise
+    })
+    .then(result => {
+      if (!result) {
+        return res.status(401).json({
+          message: `Incorrect password for ${req.body.email}`
+        });
+      }
+      const token = jwt.sign(
+        { email: user.email, userId: user._id },
+        'you_better_be_studying',
+        { expiresIn: '1h' }
+      );
+    })
+    .catch(err => {
+      return res.status(401).json({
+        message: 'Authentication failed',
+        error: err
+      });
+    });
 });
 
 module.exports = router;
