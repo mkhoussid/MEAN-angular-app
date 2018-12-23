@@ -81,13 +81,17 @@ router.put(
       content: req.body.content,
       imagePath: imagePath
     });
-    console.log(
-      `\n\n\n\n\n\n\n\n\n\n\n\n\n${post}\n\n\n\n\n\n\n\n\n\n\n\n\n\n`
-    );
-    Post.updateOne({ _id: req.params.id }, post).then(result => {
-      res
-        .status(200)
-        .json({ message: `Successfully updated ${req.params.id}` });
+    Post.updateOne(
+      { _id: req.params.id, createdPost: req.userData.userId },
+      post
+    ).then(result => {
+      if (result.n > 0) {
+        res
+          .status(200)
+          .json({ message: `Successfully updated ${req.params.id}` });
+      } else {
+        res.status(401).json({ message: `Failed to update ${req.params.id}` });
+      }
     });
   }
 );
@@ -127,12 +131,19 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.delete('/:id', checkAuth, (req, res, next) => {
-  Post.deleteOne({ _id: req.params.id }).then(result => {
-    console.log(result);
-    res
-      .status(200)
-      .json({ message: `Post with ID: ${req.params.id} deleted!` });
-  });
+  Post.deleteOne({ _id: req.params.id, creator: req.userData.userId }).then(
+    result => {
+      if (result.n > 0) {
+        res
+          .status(200)
+          .json({ message: `Post with ID: ${req.params.id} deleted!` });
+      } else {
+        res.status(401).json({
+          message: `Failed to delete Post with ID: ${req.params.id}!`
+        });
+      }
+    }
+  );
 });
 
 module.exports = router;
