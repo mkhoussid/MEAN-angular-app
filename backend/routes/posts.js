@@ -92,15 +92,22 @@ router.get('', (req, res, next) => {
   const pageSize = +req.query.pagesize; //params are strings by default, we need numeric values, so add '+'
   const currentPage = +req.query.page;
   const postQuery = Post.find();
+  let fetchedPosts;
   if (pageSize && currentPage) {
     postQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
   }
-  postQuery.then(documents => {
-    res.status(200).json({
-      message: 'Posts fetched successfully',
-      posts: documents //you can do res.map() because mongodb has '__id', but our structure has 'id'
+  postQuery
+    .then(documents => {
+      fetchedPosts = documents;
+      return Post.count();
+    })
+    .then(count => {
+      res.status(200).json({
+        message: 'Posts fetched successfully',
+        posts: fetchedPosts, //you can do res.map() because mongodb has '__id', but our structure has 'id'
+        maxPosts: count //send this to front end so pagination knows
+      });
     });
-  });
 });
 
 router.get('/:id', (req, res, next) => {
