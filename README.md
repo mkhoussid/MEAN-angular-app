@@ -9,3 +9,5 @@ To run,
 3. Navigate to root folder in both windows,
 4. In one window execute: 'run npm start:server' (localhost:3000),
 5. In the second window: 'ng serve -o' (localhost:4200)
+
+Don't forget to NPM install all dependecies!
