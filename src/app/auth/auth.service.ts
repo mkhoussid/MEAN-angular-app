@@ -11,6 +11,7 @@ export class AuthService {
   private isAuthenticated = false;
   private token: string;
   private authStatusListener = new Subject<boolean>();
+  private tokenTimer: NodeJS.Timer;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -44,11 +45,18 @@ export class AuthService {
       password: password
     };
     this.http
-      .post<{ token: string }>('http://localhost:3000/api/user/login', authData)
+      .post<{ token: string; expiresIn: number }>(
+        'http://localhost:3000/api/user/login',
+        authData
+      )
       .subscribe(response => {
         const token = response.token; // .post<{token}> to make TS aware it will be incoming
         this.token = token;
         if (token) {
+          const expiry = response.expiresIn;
+          this.tokenTimer = setTimeout(() => {
+            this.logout();
+          }, expiry * 1000);
           this.isAuthenticated = true;
           this.authStatusListener.next(true);
           this.router.navigate(['/']);
@@ -61,5 +69,6 @@ export class AuthService {
     this.isAuthenticated = false;
     this.authStatusListener.next(false); // let every subscriber know of change
     this.router.navigate(['/']);
+    clearTimeout(this.tokenTimer);
   }
 }
