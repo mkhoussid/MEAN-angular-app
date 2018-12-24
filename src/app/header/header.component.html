@@ -1,5 +1,8 @@
 <mat-toolbar color="primary">
-  <span> <a routerLink="/"> MyMessages</a></span> <span class="spacer"></span>
+  <span>
+    <a routerLink="/"> Post<span style="color:#39CCCC">↯</span>t</a></span
+  >
+  <span class="spacer"></span>
   <ul>
     <li *ngIf="userIsAuthenticated">
       <a mat-button routerLink="/create" routerLinkActive="mat-accent"
