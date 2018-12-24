@@ -18,7 +18,15 @@ export class ErrorInterceptor implements HttpInterceptor {
     // we can hook into that stream and listen to events with pipe()
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        this.dialog.open(ErrorComponent);
+        let errorMessage = 'An unknown error occurred!';
+        if (error.error.message) {
+          errorMessage = error.error.message;
+        }
+        this.dialog.open(ErrorComponent, {
+          data: {
+            message: errorMessage
+          }
+        });
         // since i'm just adding something to observable stream (and handling it wherever we subscribe such as
         // auth.service and post.service), so i HAVE to return an observable (throwError). BUT, I can handle the
         // error(s) just above
