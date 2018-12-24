@@ -46,11 +46,14 @@ export class AuthService {
       email: email,
       password: password
     };
-    this.http
-      .post('http://localhost:3000/api/user/signup', authData)
-      .subscribe(response => {
-        console.log(response);
-      });
+    this.http.post('http://localhost:3000/api/user/signup', authData).subscribe(
+      () => {
+        this.router.navigate(['/login']);
+      },
+      error => {
+        this.authStatusListener.next(false);
+      }
+    );
   }
 
   login(email: string, password: string) {
@@ -64,6 +67,7 @@ export class AuthService {
         'http://localhost:3000/api/user/login',
         authData
       )
+
       .subscribe(response => {
         const token = response.token; // .post<{token}> to make TS aware it will be incoming
         this.token = token;
