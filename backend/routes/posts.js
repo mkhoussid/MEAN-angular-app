@@ -100,7 +100,9 @@ router.put(
         } else {
           res
             .status(401)
-            .json({ message: `Failed to update PostID: ${req.params.id}` });
+            .json({
+              message: `Not authorized to update PostID: ${req.params.id}`
+            });
         }
       })
       .catch(err => {
