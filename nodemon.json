@@ -1,0 +1,6 @@
+{
+  "env": {
+    "MONGO_ATLAS_PW": "admin",
+    "JWT_KEY": "you_better_be_studying"
+  }
+}

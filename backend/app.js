@@ -10,7 +10,9 @@ const app = express();
 
 mongoose
   .connect(
-    'mongodb+srv://admin:admin@cluster1-yyswf.mongodb.net/ng6?retryWrites=true'
+    'mongodb+srv://admin:' +
+      process.env.MONGO_ATLAS_PW +
+      '@cluster1-yyswf.mongodb.net/ng6?retryWrites=true'
   )
   .then(() => {
     console.log('connected PASSED!');
