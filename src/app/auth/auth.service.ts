@@ -67,23 +67,27 @@ export class AuthService {
         'http://localhost:3000/api/user/login',
         authData
       )
-
-      .subscribe(response => {
-        const token = response.token; // .post<{token}> to make TS aware it will be incoming
-        this.token = token;
-        if (token) {
-          const expiry = response.expiresIn;
-          this.setAuthTimer(expiry);
-          this.isAuthenticated = true;
-          this.authStatusListener.next(true);
-          this.userId = response.userId;
-          const now = new Date();
-          const expirationDate = new Date(now.getTime() + expiry * 1000);
-          console.log(expirationDate);
-          this.saveAuthData(token, expirationDate, this.userId);
-          this.router.navigate(['/']);
+      .subscribe(
+        response => {
+          const token = response.token; // .post<{token}> to make TS aware it will be incoming
+          this.token = token;
+          if (token) {
+            const expiry = response.expiresIn;
+            this.setAuthTimer(expiry);
+            this.isAuthenticated = true;
+            this.authStatusListener.next(true);
+            this.userId = response.userId;
+            const now = new Date();
+            const expirationDate = new Date(now.getTime() + expiry * 1000);
+            console.log(expirationDate);
+            this.saveAuthData(token, expirationDate, this.userId);
+            this.router.navigate(['/']);
+          }
+        },
+        error => {
+          this.authStatusListener.next(false);
         }
-      });
+      );
   }
 
   autoAuthUser() {
